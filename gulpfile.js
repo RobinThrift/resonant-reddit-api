@@ -26,9 +26,10 @@ gulp.task('compile', function() {
     var tsStream = gulp.src(config.paths.scripts)
         .pipe(tsc({
             target: 'es6',
+            declaration: true,
             moduleResolution: 'node',
             module: 'commonjs',
-            removeComments: true
+            preserveConstEnums: true
         }));
 
     return merge([
@@ -89,7 +90,7 @@ gulp.task('docs', function() {
             module: 'common',
             target: 'es6',
             includeDeclarations: true,
-            jsx: 'react',
+            preserveConstEnums: true,
 
             // output
             json: './typedoc/typedoc.json',
