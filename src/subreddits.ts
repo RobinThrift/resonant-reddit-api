@@ -1,6 +1,7 @@
 import {defaults, map} from 'lodash';
 import {RequestConfig, defaultConfig} from './requestConfig';
 import {Response} from './response';
+import {List} from 'immutable';
 import * as fetch from 'node-fetch';
 
 export const enum SUBREDDIT_LISTS {
@@ -66,7 +67,7 @@ function getListing(listing: SUBREDDIT_LISTS) {
 }
 
 function fieldRenamer(json: SubredditAPIResponse): Subreddit {
-    return {
+    return Object.freeze({
         name: json.name,
         displayName: json.display_name,
         bannerImg: json.banner_img,
@@ -85,7 +86,7 @@ function fieldRenamer(json: SubredditAPIResponse): Subreddit {
         suggestedCommentSort: json.suggested_comment_sort,
         colour: json.key_color,
         adult: json.over18
-    };
+    });
 }
 
 export function getList(listing: SUBREDDIT_LISTS, userConfig = {}) {
@@ -104,11 +105,11 @@ export function getList(listing: SUBREDDIT_LISTS, userConfig = {}) {
                 resolve({
                     prev: subreddits.data.before,
                     next: subreddits.data.after,
-                    data: map(
-                        map(subreddits.data.children, (subreddit) => { return subreddit.data; }),
-                        fieldRenamer
-                    )
-                } as Response<Subreddit>);
+                    data: List<Subreddit>(map(
+                            map(subreddits.data.children, (subreddit) => { return subreddit.data; }),
+                            fieldRenamer
+                        )
+                    )} as Response<Subreddit>);
             });
     });
 }

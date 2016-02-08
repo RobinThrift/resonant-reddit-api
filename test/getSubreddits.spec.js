@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect, assert} from 'chai';
 import {getFixture} from './helper';
 import nock from 'nock';
 import {getList, SUBREDDIT_LISTS} from '../dist/subreddits';
@@ -11,10 +11,10 @@ suite('Resonant Reddit API - Subreddits', () => {
 
         getList(SUBREDDIT_LISTS.POPULAR)
             .then((list) => {
-                expect(list.prev).to.be.null;
-                expect(list.next).to.equal('t5_2sqho');
-                expect(list.data.length).to.equal(25);
-                expect(list.data[0]).to.contain.deep({
+                assert.isNull(list.prev);
+                assert.equal(list.next, 't5_2sqho');
+                assert.equal(list.data.size, 25);
+                assert.include(list.data.toJS()[0], {
                     displayName: 'AskReddit',
                     name: 't5_2qh1i',
                     id: '2qh1i',
@@ -31,7 +31,7 @@ suite('Resonant Reddit API - Subreddits', () => {
 
         getList( SUBREDDIT_LISTS.DEFAULT)
             .catch((error) => {
-                expect(error.message).to.equal('404: Not Found');
+                assert.equal(error.message, '404: Not Found');
                 done();
             })
             .catch(done);
