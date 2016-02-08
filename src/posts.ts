@@ -1,6 +1,7 @@
 import {defaults, map} from 'lodash';
 import {RequestConfig, defaultConfig} from './requestConfig';
 import {Response} from './response';
+import {List} from 'immutable';
 import * as fetch from 'node-fetch';
 
 export type PostImageDescriptor = {
@@ -60,10 +61,10 @@ export type Post = {
         images: PostImages[]
     },
     thumbnail: string
-}
+};
 
 function initPost(json: PostAPIResponse) {
-    return {
+    return Object.freeze({
         title: json.title,
         domain: json.domain,
         id: json.id,
@@ -82,12 +83,12 @@ function initPost(json: PostAPIResponse) {
         hint: json.post_hint,
         preview: json.preview,
         thumbnail: json.thumbnail
-    };
+    });
 }
 
 export function getPosts(subreddit: string, list = 'hot', after = '', userConfig = {}) {
     let config = defaults({}, defaultConfig, userConfig) as RequestConfig;
-    return new Promise<Response<Subreddit>>((resolve, reject) => {
+    return new Promise<Response<Post>>((resolve, reject) => {
         fetch(`${config.baseUrl}/r/${subreddit}/${list}.json?after=${after}`)
             .then((resp) => {
                 if (resp.status === 200) {
@@ -101,10 +102,10 @@ export function getPosts(subreddit: string, list = 'hot', after = '', userConfig
                 resolve({
                     prev: posts.data.before,
                     next: posts.data.after,
-                    data: map(
+                    data: List<Post>(map(
                         map(posts.data.children, (post) => { return post.data; }),
                         initPost
-                    )
+                    ))
                 } as Response<Post>);
             });
     });

@@ -1,5 +1,7 @@
+import {List} from 'immutable';
+
 export type Response<T> = {
-    data: T[],
+    data: List<T>,
     next?: string,
     prev?: string
 }

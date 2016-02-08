@@ -3,7 +3,7 @@ var yargs = require('yargs'),
     gulp = require('gulp'),
     config = {
         paths: {
-            scripts: ['src/**/*.ts', 'src/*.ts', 'src/**/*.tsx', 'src/*.tsx', 'typings/*.d.ts'],
+            scripts: ['src/**/*.ts', 'src/*.ts', 'src/**/*.tsx', 'src/*.tsx', 'typings/*.d.ts', 'node_modules/immutable/dist/Immutable.d.ts'],
             tests: ['test/*.spec.js'],
             dest: 'dist'
         }

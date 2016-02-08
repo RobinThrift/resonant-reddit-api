@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect, assert} from 'chai';
 import {getFixture} from './helper';
 import nock from 'nock';
 import {getPosts} from '../dist/posts';
@@ -11,15 +11,18 @@ suite('Resonant Reddit API - Posts', () => {
 
         getPosts('funny', 'hot')
             .then((list) => {
-                expect(list.next).to.equal('t3_41adpq');
-                expect(list.data[0]).to.contain({
+                assert.equal(list.next, 't3_41adpq', 'next item is correctly set');
+                assert.throw(() => {
+                    list.data.get(0).title = 'testing';
+                }, TypeError, /Cannot assign to read only property/, 'returned objects are frozen');
+                assert.include(list.data.toJS()[0], {
                     domain: 'reddit.com',
                     id: '3z0d4r',
                     author: 'funny_mod',
                     score: 372,
                     numComments: 46,
                     created: 1451675725
-                });
+                }, 'first item is correct object');
                 done();
             }).catch(done);
     });
@@ -32,7 +35,7 @@ suite('Resonant Reddit API - Posts', () => {
         getPosts('funny', 'hot', 't3_41adpq')
             .then((list) => {
                 expect(list.next).to.equal('t3_4191qy');
-                expect(list.data[0]).to.contain({
+                expect(list.data.toJS()[0]).to.contain({
                     domain: 'imgur.com',
                     id: '41e2td',
                     author: 'vivalapizza',
