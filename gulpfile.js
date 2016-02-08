@@ -29,7 +29,10 @@ gulp.task('compile', function() {
             declaration: true,
             moduleResolution: 'node',
             module: 'commonjs',
-            preserveConstEnums: true
+            preserveConstEnums: true,
+
+            // custom typescript,
+            typescript: require('typescript')
         }));
 
     return merge([
