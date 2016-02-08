@@ -1,3 +1,5 @@
+[![Travis](https://img.shields.io/travis/RobinThrift/resonant-reddit-api/master.svg?style=flat-square)](https://travis-ci.org/RobinThrift/resonant-reddit-api)
+
 # Resonant Reddit Api
 
 ## Git Commit Messages
