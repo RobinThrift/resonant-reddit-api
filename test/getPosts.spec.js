@@ -1,4 +1,4 @@
-import {expect, assert} from 'chai';
+import {assert} from 'chai';
 import {getFixture} from './helper';
 import nock from 'nock';
 import {getPosts} from '../dist/posts';
@@ -34,8 +34,8 @@ suite('Resonant Reddit API - Posts', () => {
 
         getPosts('funny', 'hot', 't3_41adpq')
             .then((list) => {
-                expect(list.next).to.equal('t3_4191qy');
-                expect(list.data.toJS()[0]).to.contain({
+                assert.equal(list.next, 't3_4191qy');
+                assert.include(list.data.toJS()[0], {
                     domain: 'imgur.com',
                     id: '41e2td',
                     author: 'vivalapizza',
