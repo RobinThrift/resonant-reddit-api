@@ -2,7 +2,8 @@
 
 ## Git Commit Messages
 
-- Use the past tense ("Added feature" not "Add feature")
+- Use the present tense ("Add feature" not "Added feature")
+- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
 - Limit the first line to 72 characters or less
 - Reference issues and pull requests liberally
 - Consider starting the commit message with an applicable emoji:
@@ -24,4 +25,5 @@
  - ⬇️ when downgrading dependencies
  - 👕 when removing linter warnings
 
-([source](https://atom.io/docs/latest/contributing#git-commit-messages))
+([source](https://github.com/atom/atom/blob/master/CONTRIBUTING.md#git-commit-messages))
+
