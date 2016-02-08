@@ -80,7 +80,7 @@ gulp.task('docs', function() {
     return gulp.src(config.paths.scripts)
         .pipe(typedoc({
             // info
-            name: 'veer',
+            name: 'resonant-reddit-api',
             version: true,
 
             // doc options
