@@ -1,9 +1,10 @@
-﻿// Type definitions for fetch API
+// Compiled using typings@0.6.7
+// Source: https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/c865ee8d5909b6a11e5edf426b7494cd96e353ba/whatwg-fetch/whatwg-fetch.d.ts
+// Type definitions for fetch API
 // Project: https://github.com/github/fetch
 // Definitions by: Ryan Graham <https://github.com/ryan-codingintrigue>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../es6-promise/es6-promise.d.ts" />
 
 declare class Request extends Body {
 	constructor(input: string|Request, init?:RequestInit);

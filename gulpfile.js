@@ -3,7 +3,7 @@ var yargs = require('yargs'),
     gulp = require('gulp'),
     config = {
         paths: {
-            scripts: ['src/**/*.ts', 'src/*.ts', 'src/**/*.tsx', 'src/*.tsx', 'typings/*.d.ts', 'node_modules/immutable/dist/Immutable.d.ts'],
+            scripts: ['src/**/*.ts', 'src/*.ts', 'src/**/*.tsx', 'src/*.tsx', 'typings/main.d.ts'],
             tests: ['test/*.spec.js'],
             dest: 'dist'
         }
@@ -70,7 +70,7 @@ gulp.task('watch', function() {
 
 gulp.task('setup', function(done) {
     var exec = require('child_process').exec;
-    exec(join(__dirname, 'node_modules/tsd/build/cli.js') + ' install', 
+    exec(join(__dirname, 'node_modules/.bin/typings') + ' install', 
          function(err, stdout, stderr) {
             console.log(stdout);
             console.log(stderr);

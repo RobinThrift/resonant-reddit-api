@@ -1,3 +1,5 @@
+// Compiled using typings@0.6.7
+// Source: https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/eff4af0407b08a4b2653cfa2a351447007e32d0a/query-string/query-string.d.ts
 // Type definitions for query-string v3.0.0
 // Project: https://github.com/sindresorhus/query-string
 // Definitions by: Sam Verschueren <https://github.com/SamVerschueren>

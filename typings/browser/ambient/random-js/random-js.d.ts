@@ -1,3 +1,5 @@
+// Compiled using typings@0.6.7
+// Source: https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/6cbfed02a3f8214673eb3cc4a69e5c32adff0cf2/random-js/random-js.d.ts
 // Type definitions for random-js 1.0.8
 // Project: https://github.com/ckknight/random-js
 // Definitions by: Gustavo Di Pietro <https://github.com/pistacchio>

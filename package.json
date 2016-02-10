@@ -31,8 +31,8 @@
     "merge": "^1.2.0",
     "merge2": "^0.3.6",
     "nock": "^5.2.1",
-    "tsd": "^0.6.5",
     "tslint": "^3.2.1",
+    "typings": "^0.6.7",
     "yargs": "^3.32.0"
   },
   "dependencies": {

@@ -1,0 +1,14 @@
+{
+  "name": "resonant-reddit-api",
+  "dependencies": {},
+  "devDependencies": {},
+  "ambientDependencies": {
+    "es6-promise": "github:DefinitelyTyped/DefinitelyTyped/es6-promise/es6-promise.d.ts#830e8ebd9ef137d039d5c7ede24a421f08595f83",
+    "immutable": "npm:immutable",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#ad1c4f411a9ad949c0c73de4d190be1b2bf08a6f",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#aee0039a2d6686ec78352125010ebb38a7a7d743",
+    "query-string": "github:DefinitelyTyped/DefinitelyTyped/query-string/query-string.d.ts#eff4af0407b08a4b2653cfa2a351447007e32d0a",
+    "random-js": "github:DefinitelyTyped/DefinitelyTyped/random-js/random-js.d.ts#6cbfed02a3f8214673eb3cc4a69e5c32adff0cf2",
+    "whatwg-fetch": "github:DefinitelyTyped/DefinitelyTyped/whatwg-fetch/whatwg-fetch.d.ts#c865ee8d5909b6a11e5edf426b7494cd96e353ba"
+  }
+}
