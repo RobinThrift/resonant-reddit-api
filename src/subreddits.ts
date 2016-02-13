@@ -1,8 +1,8 @@
-import {defaults, map} from 'lodash';
-import {RequestConfig, defaultConfig} from './requestConfig';
+import {map} from 'lodash';
+import {ApiState} from './apiState';
 import {Response} from './response';
 import {List} from 'immutable';
-import * as fetch from 'node-fetch';
+import {ApiError} from './apiError';
 
 export const enum SUBREDDIT_LISTS {
     POPULAR,
@@ -11,7 +11,14 @@ export const enum SUBREDDIT_LISTS {
     DEFAULT
 }
 
-export type SubredditAPIResponse = {
+
+export type ListConfig = {
+    prev?: string,
+    next?: string,
+    listType: SUBREDDIT_LISTS
+}
+
+type SubredditAPIResponse = {
     name: string,
     display_name: string,
     banner_img: string,
@@ -89,27 +96,37 @@ function fieldRenamer(json: SubredditAPIResponse): Subreddit {
     });
 }
 
-export function getList(listing: SUBREDDIT_LISTS, userConfig = {}) {
-    let config = defaults({}, defaultConfig, userConfig) as RequestConfig;
-    return new Promise<Response<Subreddit>>((resolve, reject) => {
-        fetch(`${config.baseUrl}/subreddits/${getListing(listing)}.json`)
+function transformResponse(subreddits): List<Subreddit> {
+    return List<Subreddit>(map(
+        map(subreddits.data.children, (subreddit) => { return subreddit.data; }),
+        fieldRenamer
+    ));
+}
+
+
+export function getSubreddits(lastState: ApiState, listConfig: ListConfig) {
+    let {state, config} = lastState;
+    let {fetch} = config;
+    return new Promise<Response<List<Subreddit>, ListConfig>>((resolve, reject) => {
+        fetch(`${config.baseUrl}/subreddits/${getListing(listConfig.listType)}.json`)
             .then((resp) => {
-                if (resp.status === 200) {
+                if (resp.status >= 200 && resp.status < 300) {
                     return resp.json();
                 } else {
-                    reject(new Error(`${resp.status}: ${resp.statusText}`));
+                    reject(new ApiError(resp.statusText, resp.status));
                 }
             })
             .catch(reject)
-            .then((subreddits) => {
+            .then((response) => {
                 resolve({
-                    prev: subreddits.data.before,
-                    next: subreddits.data.after,
-                    data: List<Subreddit>(map(
-                            map(subreddits.data.children, (subreddit) => { return subreddit.data; }),
-                            fieldRenamer
-                        )
-                    )} as Response<Subreddit>);
+                    state: lastState,
+                    data: transformResponse(response),
+                    config: {
+                        listType: listConfig.listType,
+                        prev: response.data.before,
+                        next: response.data.after
+                    }
+                });
             });
     });
 }

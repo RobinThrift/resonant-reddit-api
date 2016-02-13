@@ -1,7 +1,8 @@
-import {List} from 'immutable';
+import {ApiState} from './apiState';
 
-export type Response<T> = {
-    data: List<T>,
-    next?: string,
-    prev?: string
+export type Response<T, C> = {
+    state: ApiState,
+    data: T,
+    config: C
 }
+

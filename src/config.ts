@@ -1,4 +1,11 @@
-export type RequestConfig = {
+export type Config = {
+    // user configurable
+    clientId: string,
+    scope: string[],
+
+    // funcitonal config
+    fetch?: Function,
+
     baseUrl: string,
     authedBaseUrl: string,
     endpoints: {
@@ -7,7 +14,9 @@ export type RequestConfig = {
     }
 }
 
-export let defaultConfig: RequestConfig = {
+export let defaultConfig: Config = {
+    clientId: '',
+    scope: [],
     baseUrl: 'https://www.reddit.com',
     authedBaseUrl: 'https://oauth.reddit.com',
     endpoints: {
