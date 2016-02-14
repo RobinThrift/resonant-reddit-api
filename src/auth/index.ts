@@ -1,5 +1,5 @@
 import {defaults} from 'lodash';
-import {RequestConfig, defaultConfig} from '../requestConfig';
+import {Config, defaultConfig} from '../config';
 import {Response} from '../response';
 import {List} from 'immutable';
 import * as base64 from 'base-64';
