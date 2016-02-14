@@ -1,8 +1,15 @@
-import {defaults, map} from 'lodash';
-import {RequestConfig, defaultConfig} from './requestConfig';
+import {map} from 'lodash';
+import {ApiState} from './apiState';
 import {Response} from './response';
 import {List} from 'immutable';
-import * as fetch from 'node-fetch';
+import {ApiError} from './apiError';
+
+export type GetPostsConfig = {
+    before?: string,
+    after?: string,
+    subreddit: string,
+    list: string
+}
 
 export type PostImageDescriptor = {
     url: string,
@@ -86,27 +93,39 @@ function initPost(json: PostAPIResponse) {
     });
 }
 
-export function getPosts(subreddit: string, list = 'hot', after = '', userConfig = {}) {
-    let config = defaults({}, defaultConfig, userConfig) as RequestConfig;
-    return new Promise<Response<Post>>((resolve, reject) => {
+function transformResponse(response) {
+    return List<Post>(map(
+        map(response.data.children, (post) => { return post.data; }),
+        initPost
+    ));
+}
+
+export function getPosts(lastState: ApiState, listConfig: GetPostsConfig) {
+    let {state, config} = lastState;
+    let {fetch} = config;
+    let {subreddit, list, after = ''} = listConfig;
+    return new Promise<Response<List<Post>, GetPostsConfig>>((resolve, reject) => {
         fetch(`${config.baseUrl}/r/${subreddit}/${list}.json?after=${after}`)
             .then((resp) => {
-                if (resp.status === 200) {
+                if (resp.status >= 200 && resp.status < 300) {
                     return resp.json();
                 } else {
-                    reject(new Error(`${resp.status}: ${resp.statusText}`));
+                    reject(new ApiError(resp.statusText, resp.status));
                 }
             })
             .catch(reject)
-            .then((posts) => {
+            .then((response) => {
                 resolve({
-                    prev: posts.data.before,
-                    next: posts.data.after,
-                    data: List<Post>(map(
-                        map(posts.data.children, (post) => { return post.data; }),
-                        initPost
-                    ))
-                } as Response<Post>);
-            });
+                    state: lastState,
+                    data: transformResponse(response),
+                    config: {
+                        before: response.data.before,
+                        after: response.data.after,
+                        list,
+                        subreddit
+                    }
+                });
+            })
+            .catch(reject);
     });
 }
