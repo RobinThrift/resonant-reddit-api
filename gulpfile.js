@@ -63,7 +63,7 @@ gulp.task('test', ['compile'], function() {
         }));
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', ['test'], function() {
     gulp.watch(config.paths.scripts, ['lint', 'test']);;
     gulp.watch(config.paths.tests, ['lint', 'test']);;
 });
