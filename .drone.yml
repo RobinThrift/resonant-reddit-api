@@ -6,8 +6,6 @@ matrix:
 build:
     image: node:$$NODE_VERSION
     commands:
-        - echo "Installing latest stable npm version..."
-        - npm install -g npm@latest
-        - npm --version
         - npm install -g gulp
+        - npm install
         - gulp test
