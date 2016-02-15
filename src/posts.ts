@@ -129,3 +129,10 @@ export function getPosts(lastState: ApiState, listConfig: GetPostsConfig) {
             .catch(reject);
     });
 }
+
+
+export function getPost(posts: List<Post>, id: string): Post {
+    return posts.find((post) => {
+        return post.id === id;
+    });
+}
