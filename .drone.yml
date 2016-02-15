@@ -1,7 +1,6 @@
 matrix:
     NODE_VERSION:
         - 5
-        - 4
         - latest
 build:
     image: node:$$NODE_VERSION
