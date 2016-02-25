@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import {getFixture} from './helper';
 import fetch from 'node-fetch';
 import nock from 'nock';
-import {getPosts, getPost} from '../dist/posts';
+import {getPosts, getPost, getComments} from '../dist/posts';
 import {setup} from '../dist/apiState';
 import {List} from 'immutable';
 
@@ -72,5 +72,23 @@ suite('Resonant Reddit API - Posts', () => {
             url: '/r/funny/comments/41dsl1/yes_i_can_see_the_future/',
             hint: 'image'
         });
+    });
+
+    test('getComments(), successful', async () => {
+        nock('https://www.reddit.com')
+            .get('/r/funny/comments/41dsl1/yes_i_can_see_the_future.json')
+            .reply(200, getFixture('r_funny_41dsl1_comments.json', true));
+
+        let {data} = await getComments(apiState, {postUrl: '/r/funny/comments/41dsl1/yes_i_can_see_the_future/'})
+
+        assert.include(data.get(0), {
+            author: 'koolerthanjinx',
+            score: 1478,
+            body: 'His palm was moving so fast of course the clairvoyant wouldn\'t be able to read it.',
+            created: 1453076887,
+            id: 'cz1lq2q'
+        });
+
+        assert.equal(data.get(0).replies.size, 3);
     });
 });

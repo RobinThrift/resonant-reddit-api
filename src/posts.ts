@@ -1,4 +1,4 @@
-import {map} from 'lodash';
+import {map, assign, last, dropRight} from 'lodash';
 import {ApiState} from './apiState';
 import {Response} from './response';
 import {List} from 'immutable';
@@ -9,6 +9,19 @@ export type GetPostsConfig = {
     after?: string,
     subreddit: string,
     list: string
+}
+
+export type GetCommentsConfig = {
+    postUrl: string,
+    before?: string,
+    after?: string,
+    sorting: string, // make intro string type (confidence, top, new, controversial, old, random, qa)
+    showEdits: boolean,
+    showMore: boolean,
+    depth: number,
+    limit: number,
+    moreIds: string[],
+    count: number
 }
 
 export type PostImageDescriptor = {
@@ -70,6 +83,42 @@ export type Post = {
     thumbnail: string
 };
 
+
+export type CommentAPIResponse = {
+    kind: string,
+    data: {
+        children?: string[],
+        count?: number,
+        author: string,
+        id: string,
+        score: number,
+        body: string,
+        body_html: string,
+        created: number,
+        replies: {
+            kind: string,
+            data: {
+                children: CommentAPIResponse[]
+            }
+        }
+    }
+}
+
+export type Comment = {
+    author: string,
+    id: string,
+    score: number,
+    body: string,
+    bodyHTML: string,
+    created: number,
+    replies: List<Comment | MoreComments>
+}
+
+export type MoreComments = {
+    count: number,
+    ids: string[]
+}
+
 function initPost(json: PostAPIResponse) {
     return Object.freeze({
         title: json.title,
@@ -93,10 +142,28 @@ function initPost(json: PostAPIResponse) {
     });
 }
 
-function transformResponse(response) {
-    return List<Post>(map(
-        map(response.data.children, (post) => { return post.data; }),
-        initPost
+function initComment(json: CommentAPIResponse): Comment | MoreComments {
+    if (json.kind === 'more') {
+        return Object.freeze({
+            ids: json.data.children,
+            count: json.data.count
+        });
+    }
+    return Object.freeze({
+        author: json.data.author,
+        id: json.data.id,
+        score: json.data.score,
+        body: json.data.body,
+        bodyHTML: json.data.body_html,
+        created: json.data.created,
+        replies: (json.data.replies.data) ? List<Comment>(map(json.data.replies.data.children, initComment)) : List<Comment>()
+    });
+}
+
+function transformResponse<T>(response, initFn, extract = true) {
+    return List<T>(map(
+        (extract) ? map(response, (post) => { return post.data; }) : response,
+        initFn
     ));
 }
 
@@ -117,7 +184,7 @@ export function getPosts(lastState: ApiState, listConfig: GetPostsConfig) {
             .then((response) => {
                 resolve({
                     state: lastState,
-                    data: transformResponse(response),
+                    data: transformResponse<Post>(response.data.children, initPost),
                     config: {
                         before: response.data.before,
                         after: response.data.after,
@@ -136,3 +203,34 @@ export function getPost(posts: List<Post>, id: string): Post {
         return post.id === id;
     });
 }
+
+export function getComments(lastState: ApiState, commentConfig: GetCommentsConfig) {
+    let {config} = lastState;
+    let {fetch} = config;
+    let postUrl = commentConfig.postUrl.replace(/\/$/, '.json');
+    return new Promise<Response<List<Comment>, GetCommentsConfig>>((resolve, reject) => {
+        fetch(`${config.baseUrl}${postUrl}`)
+            .then((resp) => {
+                if (resp.status >= 200 && resp.status < 300) {
+                    return resp.json();
+                } else {
+                    reject(new ApiError(resp.statusText, resp.status));
+                }
+            })
+            .catch(reject)
+            .then((response) => {
+                let {before, after} = response[1].data;
+                let moreEntry = last(response[1].data.children).data;
+                let moreIds = moreEntry.children;
+                let count = moreEntry.count;
+                resolve({
+                    state: lastState,
+                    data: transformResponse<Comment>(dropRight(response[1].data.children, 1), initComment, false),
+                    config: assign({before, after, moreIds, count}, commentConfig)
+                });
+            })
+            .catch(reject);
+    });
+}
+
+//@FEAT(morechildren): implement more children api
